@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brawl Stars - Dashboard Clubs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6C5CE7;
+            --secondary: #00B4D8;
+            --dark: #1A1A2E;
+            --darker: #0F0F1E;
+            --light: #FFFFFF;
+            --accent: #FF6B9D;
+            --success: #00D9A3;
+            --card-bg: #252540;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(108, 92, 231, 0.3);
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 1.5em;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid #ff4444;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .clubs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .club-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .club-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4);
+            border-color: var(--primary);
+        }
+
+        .club-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .club-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            text-transform: capitalize;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .club-icon {
+            font-size: 2.5em;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            opacity: 0.7;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .top-player {
+            background: rgba(108, 92, 231, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .top-player-label {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .top-player-name {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .top-player-trophies {
+            color: var(--accent);
+            font-size: 1.1em;
+        }
+
+        /* Page détaillée du club */
+        .back-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+
+        .back-button:hover {
+            background: var(--secondary);
+        }
+
+        .members-list {
+            display: grid;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .member-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--primary);
+            transition: transform 0.2s;
+        }
+
+        .member-card:hover {
+            transform: translateX(5px);
+        }
+
+        .member-rank {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--accent);
+            width: 50px;
+        }
+
+        .member-info {
+            flex: 1;
+            margin-left: 20px;
+        }
+
+        .member-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .member-stats {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .trophy-count {
+            color: var(--success);
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .ranked-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .chart-container {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .clubs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .member-stats {
+                flex-direction: column;
+                gap: 5px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏆 Brawl Stars Dashboard</h1>
+            <p class="subtitle">Statistiques des 6 Clubs</p>
+        </header>
+
+        <div id="app">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Chargement des données...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const API_KEY = 'VOTRE_CLE_API_ICI'; // À remplacer par votre clé API
+        const API_BASE_URL = 'https://api.brawlstars.com/v1';
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+        // Structure des clubs avec les tags des joueurs
+        const CLUBS_DATA = {
+            fleurie: ['#2PP0RGQU2', '#2PPVQ9RVV', '#8JVRQ92P'],
+            celeste: ['#2QJPYLJQL', '#QPGJLP90', '#9YP8YLVG'],
+            etoilee: ['#2GYU8PCC', '#22J8RGJPV', '#2P0G9P0QU'],
+            brulee: ['#2YGPRQYCC'], // ID du club brulée
+            gelee: ['#9VGPJLVU', '#2PRGVVQ9Y', '#QCRJGU2L'],
+            mini: ['#2GVRPPUCY', '#YLRU20PC', '#8YL8LJVP']
+        };
+
+        const CLUB_ICONS = {
+            fleurie: '🌸',
+            celeste: '☁️',
+            etoilee: '⭐',
+            brulee: '🔥',
+            gelee: '🧊',
+            mini: '🐣'
+        };
+
+        // ============================================
+        // GESTION DU CACHE
+        // ============================================
+        class CacheManager {
+            static get(key) {
+                const cached = localStorage.getItem(key);
+                if (!cached) return null;
+                
+                const { data, timestamp } = JSON.parse(cached);
+                if (Date.now() - timestamp > CACHE_DURATION) {
+                    localStorage.removeItem(key);
+                    return null;
+                }
+                return data;
+            }
+
+            static set(key, data) {
+                const cacheData = {
+                    data,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(key, JSON.stringify(cacheData));
+            }
+        }
+
+        // ============================================
+        // API BRAWL STARS
+        // ============================================
+        class BrawlStarsAPI {
+            static async fetchPlayer(playerTag) {
+                // Nettoyer le tag (enlever # si présent)
+                const cleanTag = playerTag.replace('#', '');
+                const cacheKey = `player_${cleanTag}`;
+                
+                // Vérifier le cache
+                const cached = CacheManager.get(cacheKey);
+                if (cached) return cached;
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/players/%23${cleanTag}`, {
+                        headers: {
+                            'Authorization': `Bearer ${API_KEY}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Erreur API: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    CacheManager.set(cacheKey, data);
+                    return data;
+                } catch (error) {
+                    console.error('Erreur lors de la récupération du joueur:', error);
+                    return null;
+                }
+            }
+
+            static async fetchClubData(clubName, playerTags) {
+                const players = [];
+                
+                for (const tag of playerTags) {
+                    const player = await this.fetchPlayer(tag);
+                    if (player) {
+                        players.push({
+                            name: player.name,
+                            tag: player.tag,
+                            trophies: player.trophies,
+                            rank: player['3vs3Victories'] || 0,
+                            highestTrophies: player.highestTrophies
+                        });
+                    }
+                }
+
+                // Trier par trophées
+                players.sort((a, b) => b.trophies - a.trophies);
+
+                return {
+                    name: clubName,
+                    icon: CLUB_ICONS[clubName],
+                    members: players,
+                    totalTrophies: players.reduce((sum, p) => sum + p.trophies, 0),
+                    memberCount: players.length,
+                    averageTrophies: Math.round(players.reduce((sum, p) => sum + p.trophies, 0) / players.length),
+                    topPlayer: players[0]
+                };
+            }
+        }
+
+        // ============================================
+        // AFFICHAGE DASHBOARD
+        // ============================================
+        class Dashboard {
+            static async render() {
+                const app = document.getElementById('app');
+                app.innerHTML = '<div class="loading"><div class="spinner"></div><p>Chargement des données...</p></div>';
+
+                try {
+                    const clubsPromises = Object.entries(CLUBS_DATA).map(([name, tags]) =>
+                        BrawlStarsAPI.fetchClubData(name, tags)
+                    );
+
+                    const clubs = await Promise.all(clubsPromises);
+                    
+                    app.innerHTML = '<div class="clubs-grid" id="clubsGrid"></div>';
+                    const grid = document.getElementById('clubsGrid');
+
+                    clubs.forEach(club => {
+                        const card = this.createClubCard(club);
+                        grid.appendChild(card);
+                    });
+
+                } catch (error) {
+                    app.innerHTML = `<div class="error">❌ Erreur lors du chargement des données. Vérifiez votre clé API.</div>`;
+                    console.error(error);
+                }
+            }
+
+            static createClubCard(club) {
+                const card = document.createElement('div');
+                card.className = 'club-card';
+                card.onclick = () => ClubDetailView.render(club);
+
+                card.innerHTML = `
+                    <div class="club-header">
+                        <div class="club-name">${club.name}</div>
+                        <div class="club-icon">${club.icon}</div>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Trophées totaux</span>
+                        <span class="stat-value">🏆 ${club.totalTrophies.toLocaleString()}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Membres</span>
+                        <span class="stat-value">👥 ${club.memberCount}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Moyenne</span>
+                        <span class="stat-value">📊 ${club.averageTrophies.toLocaleString()}</span>
+                    </div>
+                    ${club.topPlayer ? `
+                        <div class="top-player">
+                            <div class="top-player-label">🥇 Meilleur joueur</div>
+                            <div class="top-player-name">${club.topPlayer.name}</div>
+                            <div class="top-player-trophies">🏆 ${club.topPlayer.trophies.toLocaleString()}</div>
+                        </div>
+                    ` : ''}
+                `;
+
+                return card;
+            }
+        }
+
+        // ============================================
+        // VUE DÉTAILLÉE DU CLUB
+        // ============================================
+        class ClubDetailView {
+            static render(club) {
+                const app = document.getElementById('app');
+                
+                app.innerHTML = `
+                    <button class="back-button" onclick="Dashboard.render()">⬅ Retour au Dashboard</button>
+                    
+                    <header>
+                        <h1>${club.icon} ${club.name.toUpperCase()}</h1>
+                        <p class="subtitle">${club.memberCount} membres • ${club.totalTrophies.toLocaleString()} trophées</p>
+                    </header>
+
+                    <div class="chart-container">
+                        <canvas id="trophiesChart"></canvas>
+                    </div>
+
+                    <div class="members-list" id="membersList"></div>
+                `;
+
+                this.renderMembersList(club.members);
+                this.renderChart(club.members);
+            }
+
+            static renderMembersList(members) {
+                const list = document.getElementById('membersList');
+                
+                members.forEach((member, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'member-card';
+                    card.innerHTML = `
+                        <div class="member-rank">#${index + 1}</div>
+                        <div class="member-info">
+                            <div class="member-name">${member.name}</div>
+                            <div class="member-stats">
+                                <span class="trophy-count">🏆 ${member.trophies.toLocaleString()}</span>
+                                <span class="ranked-badge">⚔️ ${member.rank} victoires 3v3</span>
+                            </div>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            }
+
+            static renderChart(members) {
+                const ctx = document.getElementById('trophiesChart').getContext('2d');
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: members.map(m => m.name),
+                        datasets: [{
+                            label: 'Trophées',
+                            data: members.map(m => m.trophies),
+                            backgroundColor: 'rgba(108, 92, 231, 0.6)',
+                            borderColor: 'rgba(108, 92, 231, 1)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Trophées par membre',
+                                color: '#fff',
+                                font: { size: 18 }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: '#fff' },
+                                grid: { color: 'rgba(255,255,255,0.1)' }
+                            },
+                            x: {
+                                ticks: { color: '#fff' },
+                                grid: { color: 'rgba(255,255,255,0.1)' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // ============================================
+        // INITIALISATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            Dashboard.render();
+        });
+    </script>
+</body>
+</html>
