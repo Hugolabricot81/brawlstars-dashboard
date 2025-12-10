@@ -129,6 +129,13 @@
             font-size: 2.5em;
         }
 
+        .club-description {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
         .stat-row {
             display: flex;
             justify-content: space-between;
@@ -171,6 +178,16 @@
         .top-player-trophies {
             color: var(--accent);
             font-size: 1.1em;
+        }
+
+        .club-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 10px;
+            background: rgba(0, 180, 216, 0.2);
+            border: 1px solid var(--secondary);
         }
 
         /* Page détaillée du club */
@@ -229,10 +246,17 @@
             margin-bottom: 5px;
         }
 
+        .member-role {
+            font-size: 0.85em;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
         .member-stats {
             display: flex;
             gap: 20px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .trophy-count {
@@ -292,18 +316,18 @@
         // ============================================
         // CONFIGURATION
         // ============================================
-        const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjM3MDJjZWM3LWY0ZjItNGQwYS1hYWZiLWQxOTQ4MjE4OWJkYyIsImlhdCI6MTc2NTM4ODgyNSwic3ViIjoiZGV2ZWxvcGVyL2ZiNDViNGRlLTE5YmUtNTY0Ny01MjUxLTZmYThmNGIxYTg2MiIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0cyI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsiY2lkcnMiOlsiMTg1LjE5OS4xMDguMTUzIiwiMTg1LjE5OS4xMDkuMTUzIiwiMTg1LjE5OS4xMTAuMTUzIiwiMTg1LjE5OS4xMTEuMTUzIl0sInR5cGUiOiJjbGllbnQifV19.CFNe-gd1b3m-XP54SC59JXb7TNNAVjjuTxfwJlt1rNMjOSdLyVhRy8F2hgl0IJoJQQP_g9DgjLW29YAEfl8YUA'; // À remplacer par votre clé API
+        const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjM3MDJjZWM3LWY0ZjItNGQwYS1hYWZiLWQxOTQ4MjE4OWJkYyIsImlhdCI6MTc2NTM4ODgyNSwic3ViIjoiZGV2ZWxvcGVyL2ZiNDViNGRlLTE5YmUtNTY0Ny01MjUxLTZmYThmNGIxYTg2MiIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0cyI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsiY2lkcnMiOlsiMTg1LjE5OS4xMDguMTUzIiwiMTg1LjE5OS4xMDkuMTUzIiwiMTg1LjE5OS4xMTAuMTUzIiwiMTg1LjE5OS4xMTEuMTUzIl0sInR5cGUiOiJjbGllbnQifV19.CFNe-gd1b3m-XP54SC59JXb7TNNAVjjuTxfwJlt1rNMjOSdLyVhRy8F2hgl0IJoJQQP_g9DgjLW29YAEfl8YUA';
         const API_BASE_URL = 'https://api.brawlstars.com/v1';
         const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-        // Structure des clubs avec les tags des joueurs
+        // IDs des clubs (tags)
         const CLUBS_DATA = {
-            fleurie: ['#2PP0RGQU2', '#2PPVQ9RVV', '#8JVRQ92P'],
-            celeste: ['#2QJPYLJQL', '#QPGJLP90', '#9YP8YLVG'],
-            etoilee: ['#2GYU8PCC', '#22J8RGJPV', '#2P0G9P0QU'],
-            brulee: ['2YGPRQYCC'], // ID du club brulée
-            gelee: ['#9VGPJLVU', '#2PRGVVQ9Y', '#QCRJGU2L'],
-            mini: ['#2GVRPPUCY', '#YLRU20PC', '#8YL8LJVP']
+            etoilee: '29UPLG8QQ',
+            fleurie: '2C9Y28JPP',
+            celeste: '2JUVYQ0YV',
+            brulee: '2YGPRQYCC',
+            gelee: '2CJJLLUQ9',
+            mini: '2GVRPPUCY' // À remplacer par le vrai tag du club mini
         };
 
         const CLUB_ICONS = {
@@ -313,6 +337,14 @@
             brulee: '🔥',
             gelee: '🧊',
             mini: '🐣'
+        };
+
+        // Traduction des rôles
+        const ROLE_TRANSLATIONS = {
+            'president': 'Président',
+            'vicePresident': 'Vice-Président',
+            'senior': 'Ainé',
+            'member': 'Membre'
         };
 
         // ============================================
@@ -344,62 +376,80 @@
         // API BRAWL STARS
         // ============================================
         class BrawlStarsAPI {
-            static async fetchPlayer(playerTag) {
+            /**
+             * Récupère les informations complètes d'un club via l'API
+             */
+            static async fetchClub(clubTag) {
                 // Nettoyer le tag (enlever # si présent)
-                const cleanTag = playerTag.replace('#', '');
-                const cacheKey = `player_${cleanTag}`;
+                const cleanTag = clubTag.replace('#', '');
+                const cacheKey = `club_${cleanTag}`;
                 
                 // Vérifier le cache
                 const cached = CacheManager.get(cacheKey);
-                if (cached) return cached;
+                if (cached) {
+                    console.log(`✅ Données du club #${cleanTag} chargées depuis le cache`);
+                    return cached;
+                }
 
                 try {
-                    const response = await fetch(`${API_BASE_URL}/players/%23${cleanTag}`, {
+                    console.log(`🔄 Récupération du club #${cleanTag} depuis l'API...`);
+                    const response = await fetch(`${API_BASE_URL}/clubs/%23${cleanTag}`, {
                         headers: {
-                            'Authorization': `Bearer ${API_KEY}`
+                            'Authorization': `Bearer ${API_KEY}`,
+                            'Accept': 'application/json'
                         }
                     });
 
                     if (!response.ok) {
-                        throw new Error(`Erreur API: ${response.status}`);
+                        throw new Error(`Erreur API: ${response.status} - ${response.statusText}`);
                     }
 
                     const data = await response.json();
+                    console.log(`✅ Club #${cleanTag} récupéré:`, data.name);
+                    
                     CacheManager.set(cacheKey, data);
                     return data;
                 } catch (error) {
-                    console.error('Erreur lors de la récupération du joueur:', error);
+                    console.error(`❌ Erreur lors de la récupération du club #${cleanTag}:`, error);
                     return null;
                 }
             }
 
-            static async fetchClubData(clubName, playerTags) {
-                const players = [];
-                
-                for (const tag of playerTags) {
-                    const player = await this.fetchPlayer(tag);
-                    if (player) {
-                        players.push({
-                            name: player.name,
-                            tag: player.tag,
-                            trophies: player.trophies,
-                            rank: player['3vs3Victories'] || 0,
-                            highestTrophies: player.highestTrophies
-                        });
-                    }
+            /**
+             * Transforme les données brutes de l'API en format exploitable
+             */
+            static formatClubData(clubName, apiData) {
+                if (!apiData || !apiData.members) {
+                    return null;
                 }
 
-                // Trier par trophées
-                players.sort((a, b) => b.trophies - a.trophies);
+                // Trier les membres par trophées (du plus haut au plus bas)
+                const sortedMembers = apiData.members
+                    .map(member => ({
+                        name: member.name,
+                        tag: member.tag,
+                        trophies: member.trophies,
+                        role: ROLE_TRANSLATIONS[member.role] || member.role,
+                        nameColor: member.nameColor || '#FFFFFF'
+                    }))
+                    .sort((a, b) => b.trophies - a.trophies);
+
+                const totalTrophies = sortedMembers.reduce((sum, m) => sum + m.trophies, 0);
+                const memberCount = sortedMembers.length;
 
                 return {
                     name: clubName,
                     icon: CLUB_ICONS[clubName],
-                    members: players,
-                    totalTrophies: players.reduce((sum, p) => sum + p.trophies, 0),
-                    memberCount: players.length,
-                    averageTrophies: Math.round(players.reduce((sum, p) => sum + p.trophies, 0) / players.length),
-                    topPlayer: players[0]
+                    tag: apiData.tag,
+                    description: apiData.description || '',
+                    type: apiData.type,
+                    badgeId: apiData.badgeId,
+                    requiredTrophies: apiData.requiredTrophies || 0,
+                    members: sortedMembers,
+                    totalTrophies: totalTrophies,
+                    memberCount: memberCount,
+                    averageTrophies: memberCount > 0 ? Math.round(totalTrophies / memberCount) : 0,
+                    topPlayer: sortedMembers[0] || null
                 };
             }
         }
@@ -410,26 +460,43 @@
         class Dashboard {
             static async render() {
                 const app = document.getElementById('app');
-                app.innerHTML = '<div class="loading"><div class="spinner"></div><p>Chargement des données...</p></div>';
+                app.innerHTML = '<div class="loading"><div class="spinner"></div><p>Chargement des clubs depuis l\'API Brawl Stars...</p></div>';
 
                 try {
-                    const clubsPromises = Object.entries(CLUBS_DATA).map(([name, tags]) =>
-                        BrawlStarsAPI.fetchClubData(name, tags)
-                    );
+                    // Récupérer tous les clubs en parallèle
+                    const clubsPromises = Object.entries(CLUBS_DATA).map(async ([name, tag]) => {
+                        const apiData = await BrawlStarsAPI.fetchClub(tag);
+                        return BrawlStarsAPI.formatClubData(name, apiData);
+                    });
 
                     const clubs = await Promise.all(clubsPromises);
                     
+                    // Filtrer les clubs qui n'ont pas pu être chargés
+                    const validClubs = clubs.filter(club => club !== null);
+
+                    if (validClubs.length === 0) {
+                        throw new Error('Aucun club n\'a pu être chargé');
+                    }
+
                     app.innerHTML = '<div class="clubs-grid" id="clubsGrid"></div>';
                     const grid = document.getElementById('clubsGrid');
 
-                    clubs.forEach(club => {
+                    validClubs.forEach(club => {
                         const card = this.createClubCard(club);
                         grid.appendChild(card);
                     });
 
+                    console.log(`✅ ${validClubs.length} clubs chargés avec succès`);
+
                 } catch (error) {
-                    app.innerHTML = `<div class="error">❌ Erreur lors du chargement des données. Vérifiez votre clé API.</div>`;
-                    console.error(error);
+                    console.error('❌ Erreur critique:', error);
+                    app.innerHTML = `
+                        <div class="error">
+                            <h2>❌ Erreur de chargement</h2>
+                            <p>${error.message}</p>
+                            <p style="margin-top: 10px; font-size: 0.9em;">Vérifiez la console pour plus de détails.</p>
+                        </div>
+                    `;
                 }
             }
 
@@ -440,21 +507,30 @@
 
                 card.innerHTML = `
                     <div class="club-header">
-                        <div class="club-name">${club.name}</div>
+                        <div>
+                            <div class="club-name">${club.name}</div>
+                            ${club.description ? `<div class="club-description">"${club.description}"</div>` : ''}
+                        </div>
                         <div class="club-icon">${club.icon}</div>
                     </div>
+                    
                     <div class="stat-row">
                         <span class="stat-label">Trophées totaux</span>
                         <span class="stat-value">🏆 ${club.totalTrophies.toLocaleString()}</span>
                     </div>
                     <div class="stat-row">
                         <span class="stat-label">Membres</span>
-                        <span class="stat-value">👥 ${club.memberCount}</span>
+                        <span class="stat-value">👥 ${club.memberCount}/30</span>
                     </div>
                     <div class="stat-row">
                         <span class="stat-label">Moyenne</span>
                         <span class="stat-value">📊 ${club.averageTrophies.toLocaleString()}</span>
                     </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Trophées requis</span>
+                        <span class="stat-value">🎯 ${club.requiredTrophies.toLocaleString()}</span>
+                    </div>
+                    
                     ${club.topPlayer ? `
                         <div class="top-player">
                             <div class="top-player-label">🥇 Meilleur joueur</div>
@@ -462,6 +538,8 @@
                             <div class="top-player-trophies">🏆 ${club.topPlayer.trophies.toLocaleString()}</div>
                         </div>
                     ` : ''}
+                    
+                    <div class="club-badge">Tag: ${club.tag}</div>
                 `;
 
                 return card;
@@ -480,7 +558,8 @@
                     
                     <header>
                         <h1>${club.icon} ${club.name.toUpperCase()}</h1>
-                        <p class="subtitle">${club.memberCount} membres • ${club.totalTrophies.toLocaleString()} trophées</p>
+                        <p class="subtitle">${club.memberCount}/30 membres • ${club.totalTrophies.toLocaleString()} trophées</p>
+                        ${club.description ? `<p class="subtitle" style="margin-top: 10px; font-style: italic;">"${club.description}"</p>` : ''}
                     </header>
 
                     <div class="chart-container">
@@ -500,13 +579,21 @@
                 members.forEach((member, index) => {
                     const card = document.createElement('div');
                     card.className = 'member-card';
+                    
+                    // Médailles pour le top 3
+                    let rankEmoji = `#${index + 1}`;
+                    if (index === 0) rankEmoji = '🥇';
+                    else if (index === 1) rankEmoji = '🥈';
+                    else if (index === 2) rankEmoji = '🥉';
+                    
                     card.innerHTML = `
-                        <div class="member-rank">#${index + 1}</div>
+                        <div class="member-rank">${rankEmoji}</div>
                         <div class="member-info">
                             <div class="member-name">${member.name}</div>
+                            <div class="member-role">${member.role}</div>
                             <div class="member-stats">
                                 <span class="trophy-count">🏆 ${member.trophies.toLocaleString()}</span>
-                                <span class="ranked-badge">⚔️ ${member.rank} victoires 3v3</span>
+                                <span class="ranked-badge">${member.tag}</span>
                             </div>
                         </div>
                     `;
@@ -517,27 +604,32 @@
             static renderChart(members) {
                 const ctx = document.getElementById('trophiesChart').getContext('2d');
                 
+                // Limiter à 15 joueurs max pour la lisibilité du graphique
+                const displayMembers = members.slice(0, 15);
+                
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: members.map(m => m.name),
+                        labels: displayMembers.map(m => m.name),
                         datasets: [{
                             label: 'Trophées',
-                            data: members.map(m => m.trophies),
+                            data: displayMembers.map(m => m.trophies),
                             backgroundColor: 'rgba(108, 92, 231, 0.6)',
                             borderColor: 'rgba(108, 92, 231, 1)',
-                            borderWidth: 2
+                            borderWidth: 2,
+                            borderRadius: 5
                         }]
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: true,
                         plugins: {
                             legend: {
                                 display: false
                             },
                             title: {
                                 display: true,
-                                text: 'Trophées par membre',
+                                text: members.length > 15 ? 'Top 15 membres par trophées' : 'Trophées par membre',
                                 color: '#fff',
                                 font: { size: 18 }
                             }
@@ -545,11 +637,20 @@
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                ticks: { color: '#fff' },
+                                ticks: { 
+                                    color: '#fff',
+                                    callback: function(value) {
+                                        return value.toLocaleString();
+                                    }
+                                },
                                 grid: { color: 'rgba(255,255,255,0.1)' }
                             },
                             x: {
-                                ticks: { color: '#fff' },
+                                ticks: { 
+                                    color: '#fff',
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                },
                                 grid: { color: 'rgba(255,255,255,0.1)' }
                             }
                         }
@@ -562,6 +663,7 @@
         // INITIALISATION
         // ============================================
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Démarrage du Brawl Stars Dashboard...');
             Dashboard.render();
         });
     </script>
